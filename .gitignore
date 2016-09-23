@@ -1,0 +1,4 @@
+test/filestore
+node_modules
+*.log
+*.tgz
