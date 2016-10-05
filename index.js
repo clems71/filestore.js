@@ -2,6 +2,7 @@
 
 const crypto = require('co-crypto')
 const fs = require('fs')
+const cofs = require('co-fs')
 const fse = require('co-fs-extra')
 const pjoin = require('path').join
 
@@ -18,19 +19,28 @@ class FileStore {
   }
 
   // Return an id for later access to file
-  * addFile (path) {
+  // f can be a path to file, a buffer or a Stream
+  * addFile (f) {
     const results = yield [
       crypto.randomBytes(16),
       fse.ensureDir(this._baseDir)
     ]
     const fileId = results[0].toString('hex')
-    yield fse.copy(path, this._filePath(fileId))
+    const filePath = this._filePath(fileId)
+
+    if (f instanceof Buffer) {
+      yield cofs.writeFile(filePath, f)
+    } else if (typeof f === 'string') {
+      yield fse.copy(f, filePath)
+    } else {
+      throw Error('unsupported argument type')
+    }
     return fileId
   }
 
   * getFileStream (fileId) {
     const path = this._filePath(fileId)
-    fs.statSync(path)
+    yield cofs.stat(path)
     return fs.createReadStream(path)
   }
 }

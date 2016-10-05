@@ -1,4 +1,4 @@
-/* global beforeEach describe it*/
+/* global before beforeEach describe it*/
 
 'use strict'
 
@@ -7,7 +7,7 @@ const fse = require('co-fs-extra')
 
 const FileStore = require('..')
 
-beforeEach(function * () {
+before(function * () {
   const baseDir = `${__dirname}/filestore`
 
   yield fse.emptyDir(baseDir)
@@ -19,6 +19,13 @@ describe('FileStore.addFile', function () {
     const fileId = yield this.fs.addFile(__filename)
     fileId.should.be.a.String()
   })
+
+  it('works with buffers', function * () {
+    const fileId = yield this.fs.addFile(new Buffer('this is the content'))
+    fileId.should.be.a.String()
+  })
+
+  it('works with streams')
 
   it('throw if source file does not exist', function * () {
     let err = null
