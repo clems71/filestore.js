@@ -38,6 +38,11 @@ class FileStore {
     return fileId
   }
 
+  * getFile (fileId) {
+    const path = this._filePath(fileId)
+    return (yield cofs.readFile(path))
+  }
+
   * getFileStream (fileId) {
     const path = this._filePath(fileId)
     yield cofs.stat(path)

@@ -38,6 +38,27 @@ describe('FileStore.addFile', function () {
   })
 })
 
+describe('FileStore.getFile', function () {
+  beforeEach(function * () {
+    this.fileId = yield this.fs.addFile(__filename)
+  })
+
+  it('return a valid buffer if fileId exists', function * () {
+    const buffer = yield this.fs.getFile(this.fileId)
+    buffer.should.be.an.instanceOf(Buffer)
+  })
+
+  it('throw if fileId does not exist', function * () {
+    let err = null
+    try {
+      yield this.fs.getFile('78923')
+    } catch (e) {
+      err = e
+    }
+    err.should.be.an.Error()
+  })
+})
+
 describe('FileStore.getFileStream', function () {
   beforeEach(function * () {
     this.fileId = yield this.fs.addFile(__filename)
