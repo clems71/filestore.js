@@ -38,6 +38,10 @@ class FileStore {
     return fileId
   }
 
+  * listFiles () {
+    return yield cofs.readdir(this._baseDir)
+  }
+
   * getFile (fileId) {
     const path = this._filePath(fileId)
     return (yield cofs.readFile(path))

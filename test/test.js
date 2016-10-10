@@ -1,4 +1,4 @@
-/* global before beforeEach describe it*/
+/* global beforeEach describe it*/
 
 'use strict'
 
@@ -7,7 +7,7 @@ const fse = require('co-fs-extra')
 
 const FileStore = require('..')
 
-before(function * () {
+beforeEach(function * () {
   const baseDir = `${__dirname}/filestore`
 
   yield fse.emptyDir(baseDir)
@@ -35,6 +35,22 @@ describe('FileStore.addFile', function () {
       err = e
     }
     err.should.be.an.Error()
+  })
+})
+
+describe('FileStore.getFiles', function () {
+  it('return an empty list if none inserted', function * () {
+    const ids = yield this.fs.listFiles()
+    ids.should.be.an.Array()
+    ids.length.should.be.equal(0)
+  })
+
+  it('return a valid list of files', function * () {
+    const fileId = yield this.fs.addFile(__filename)
+    const ids = yield this.fs.listFiles()
+    ids.should.be.an.Array()
+    ids.length.should.be.equal(1)
+    ids[0].should.be.equal(fileId)
   })
 })
 
